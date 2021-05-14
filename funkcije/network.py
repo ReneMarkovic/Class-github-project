@@ -9,7 +9,7 @@ N=1000 #velikost mreže
 #random mreza
 d=2 #st povezav vsakega vozla
 
-#G=nx.random_regular_graph(d, N, seed=None)
+#G=nx.random_regular_graph(d, N, seed=None)#random
 
 #small world mreža
 k=5 #najblizji sosedi

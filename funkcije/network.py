@@ -7,8 +7,14 @@ import networkx as nx
 N=1000 #velikost mreže
 
 #napiši mrežo, katero želiš izvoziti (rand - random, SW - Small World, SF - Scale free, DSF - directed scale free)
-mreza="DSF"
+mreza="regular"
 
+
+if mreza=="regular":
+    k=5 #najblizji sosedi
+    p=0.0 #za regular je vedno 0.0
+    
+    G=nx.watts_strogatz_graph(N,k,p) 
 
 if mreza=="rand":#random mreza
     d=2 #st povezav vsakega vozla
@@ -17,9 +23,11 @@ if mreza=="rand":#random mreza
 
 if mreza=="SW":#small world mreža
     k=5 #najblizji sosedi
-    p=0.2 #verjetnost za daljnosezno povezavo v SW mrezi
+    p=0.02 #verjetnost za daljnosezno povezavo v SW mrezi
     
     G=nx.watts_strogatz_graph(N,k,p) 
+    
+    
 
 if mreza=="SF":#skalno neodvisna mreža
     
@@ -37,11 +45,11 @@ if mreza=="DSF":#usmerjena skalno neodvisna mreža  (alpha+beta+gamma=1 <--mora 
     
     G=nx.scale_free_graph(N, alpha, beta, gamma, delta_in, delta_out, create_using=None, seed=None)
 
+
 #lega vozlov
 #pos=np.loadtxt("node_coordinates.dat") #za mrezo s 1000 vozli
-#pos=nx.circular_layout(G) #krozno
-pos=nx.spring_layout(G)
-
+#pos=nx.spring_layout(G)
+pos=nx.circular_layout(G) #krozno
 
 #izris grafa
 nx.draw_networkx(G,pos,node_size=20,with_labels=False)

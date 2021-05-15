@@ -6,6 +6,8 @@ import networkx as nx
 
 N=1000 #velikost mreže
 
+#odkomentiraj mrežo, katero želiš izvoziti
+
 #random mreza
 d=2 #st povezav vsakega vozla
 

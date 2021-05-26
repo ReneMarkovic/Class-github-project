@@ -1,7 +1,7 @@
 import networkx as nx
 import random
 
-N=100
+N=10
 G=nx.Graph()
 
 tip='random'
@@ -17,14 +17,18 @@ for i in range(N):
             G.add_edge(i,j,weight=random.random())
 
 nx.write_gexf(G,tip+"_mreza.gexf")
+
+for i in G:
+    print(i,G[i])
+
 G.clear()
 
 G=nx.read_gexf(tip+"_mreza.gexf")
-print(len(G))
+#print(len(G))
 for i in G:
-    print(i,G.nodes[i]['A1'])
+    #print(i,G.nodes[i]['A1'])
     G.nodes[i]['A1']='Brisi'
-    print(i,G.nodes[i]['A1'])
+    #print(i,G.nodes[i]['A1'])
     for j in G:
         if G.has_edge(i,j):
-            print(i,j,G[i][j]['weight'])
+            i=1#print(i,j,G[i][j]['weight'])

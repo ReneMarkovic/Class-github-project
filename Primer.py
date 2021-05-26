@@ -23,6 +23,11 @@ for i in G:
 
 G.clear()
 
+
+#RAzlika#
+for i in G:
+    print(i,G.degree(i))
+
 G=nx.read_gexf(tip+"_mreza.gexf")
 #print(len(G))
 for i in G:

@@ -8,13 +8,9 @@ n = 100
 m = 3
 
 G = nx.barabasi_albert_graph(n, m, seed = None)
-#nx.draw(G)
-#plt.show()
-
 
 def E(G,op):
     E=np.zeros(N,float)
-    print(E)
     Eavg=0.0
     for i in G:
         xx=op[i]
@@ -29,6 +25,7 @@ def E(G,op):
 
 def opinion(G,op):
     Eold=E(G,op)
+    print(Eold)
     iz=random.randint(0,len(G)-1)
     temp=op[iz]
     op[iz]=abs(1-op[iz])
@@ -51,7 +48,8 @@ for i in range(N):
 
 while delta<1.8:
     op=np.zeros(N,float)
-    G=nx.Graph()
+    #G=nx.Graph()
+    
     #MORITA_MODEL(G,x,y,theta,delta,k_avg)
     skupine=nx.find_cliques(G)
     pripadnost={}
@@ -75,6 +73,7 @@ while delta<1.8:
             iz=pripadnost[i]
     
     pos=nx.get_node_attributes(G,'pos')
+    pos=nx.spring_layout(G)
     ss=[]
     for i in G:
         ss.append(G.degree(i)*3)
@@ -86,15 +85,10 @@ while delta<1.8:
         else:
             op[i]=1
             col.append(c[1])
-    print(E(G,op))
-    '''for i in op:
-        if random.random()>0.9:
-            col.append(c[0])
-        else:
-            col.append(c[1])'''
     plt.figure(figsize=(12,4))
     plt.subplot(121)
     nx.draw(G,pos,node_size=ss,node_color=col)
+    plt.show()
     plt.title("delta = %.1f"%(delta))
     
     ##Evolving the opinion

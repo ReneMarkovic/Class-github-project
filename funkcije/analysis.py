@@ -82,4 +82,4 @@ def network_parameters(path):
     l=nx.average_shortest_path_length(graph, weight="weight")
     
     
-    return c, l, mod, a, b
+    return [c, l, mod, a, b]

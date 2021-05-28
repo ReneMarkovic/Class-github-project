@@ -7,6 +7,7 @@ from seirsplus.models import *
 from seirsplus.networks import *
 from seirsplus.sim_loops import *
 from seirsplus.utilities import *
+import pandas as pd
 
 g=nx.watts_strogatz_graph(n=100, k=4, p=0.6)
 '''#plt.figure(figsize=(40,40))
@@ -60,15 +61,14 @@ sim = EoN.Gillespie_SIR(g, tau = beta, gamma=gamma, rho = I0/N, transmission_wei
 print("done with simulation, now plotting")'''
 #SEIR
 sigma = 1 # rate progression of infection
-input = np.loadtxt("network_data\\SF_net_matrix_N1000.dat")
-
+#input = np.loadtxt("network_data\\SF_net_matrix_N1000.dat")
 
 
 
 
 model = SEIRSNetworkModel(g, beta=0.45, sigma=1/5.1, gamma=1/7, initE=1)
 model.run(T=600)
-t = model.tseries  
+t = model.tseries
 model.figure_basic(plot_R='line')
 S = model.numS            # time series of S counts
 E = model.numE            # time series of E counts
@@ -91,6 +91,18 @@ list5 =R.tolist()
 list6 =F.tolist()
 list7 =Q_E.tolist()
 list8 =Q_I.tolist()
+
+df={
+    "Time":list1,
+    "S":list2,
+    "E":list3,
+    "I":list4,
+    "R":list4
+}
+
+df=pd.DataFrame.from_dict(df)
+df = df.set_index('Time')
+df.to_csv("SEIR_results.csv")
 
 f=open('outputt.txt','w')
 for element in list1:

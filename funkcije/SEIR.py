@@ -66,8 +66,9 @@ sigma = 1 # rate progression of infection
 
 
 
-model = SEIRSNetworkModel(g, beta=0.45, sigma=1/5.1, gamma=1/7, initE=1)
-model.run(T=600)
+model = SEIRSNetworkModel(g, beta=0.45, sigma=1/5.1, gamma=1/7, initE=10)
+model.run(T = 1000)
+print(model.numS)
 t = model.tseries
 model.figure_basic(plot_R='line')
 S = model.numS            # time series of S counts

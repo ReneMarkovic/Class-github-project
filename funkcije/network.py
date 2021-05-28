@@ -144,4 +144,4 @@ def network(tip, pos, N, #vse - obvezno
      
     nx.write_gexf(G,tip+"_network.gexf")    
     
-    return G, pos
+    return [G, pos]

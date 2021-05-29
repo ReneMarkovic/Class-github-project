@@ -9,7 +9,7 @@ from seirsplus.sim_loops import *
 from seirsplus.utilities import *
 import pandas as pd
 
-g=nx.watts_strogatz_graph(n=100, k=4, p=0.6)
+G=nx.watts_strogatz_graph(n=1000, k=4, p=0.6)
 '''#plt.figure(figsize=(40,40))
 #nx.draw_circular(g, with_labels = True)
 
@@ -60,15 +60,27 @@ print("doing Gillespie simulation")
 sim = EoN.Gillespie_SIR(g, tau = beta, gamma=gamma, rho = I0/N, transmission_weight="weight", return_full_data=True)
 print("done with simulation, now plotting")'''
 #SEIR
-sigma = 1 # rate progression of infection
+#sigma = 1 # rate progression of infection
 #input = np.loadtxt("network_data\\SF_net_matrix_N1000.dat")
 
 
 
 
-model = SEIRSNetworkModel(g, beta=0.45, sigma=1/5.1, gamma=1/7, initE=10)
-model.run(T = 1000)
-print(model.numS)
+model = SEIRSNetworkModel(G, beta=0.45, sigma=1/5.1, gamma=1/7, initE=100,store_Xseries = True)
+
+#model.run(T = 1000,print_interval=1.00)
+
+tmaxit=2000
+list0=np.arange(0,tmaxit+1,1)
+for t in range (tmaxit):    
+    model.run_iteration()
+    if(t%100==0):
+        print(t)
+        pass
+#print(list0)
+list00=list0.tolist()
+#model.X
+#print(model.X)
 t = model.tseries
 model.figure_basic(plot_R='line')
 S = model.numS            # time series of S counts
@@ -78,12 +90,10 @@ R = model.numR            # time series of R counts
 F = model.numF            # time series of F counts
 Q_E = model.numQ_E        # time series of Q_E counts
 Q_I = model.numQ_I        # time series of Q_I counts
-#print(str(t),str(S),str(E),str(I),str(R),str(F),str(Q_E),str(Q_I))
-#print(type(S))
-
+#print(list0)
+#print(type(S))str(t),str(S),str(E),
 
 #results=str(t),str(model.numS),str(model.numE),str(model.numI),str(model.numR),str(model.numF),str(model.numQ_E),str(model.numQ_I)
-
 list1 =t.tolist()
 list2 =S.tolist()
 list3 =E.tolist()
@@ -92,18 +102,42 @@ list5 =R.tolist()
 list6 =F.tolist()
 list7 =Q_E.tolist()
 list8 =Q_I.tolist()
+#print(list0,list1)
+#print(len(list0),len(list1),len(list2),len(list3),len(list4),len(list5))
+#plt.plot(list1)
+'''plt.plot(list2)
+plt.show()
+plt.plot(list3)
+plt.show()
+plt.plot(list4)
+plt.show()
+plt.plot(list5)
+plt.show()'''
+#print(len(list0),len(list2))
 
 df={
     "Time":list1,
     "S":list2,
     "E":list3,
     "I":list4,
-    "R":list4
+    "R":list5
+}
+
+df2={
+    "Time":list00,
+    "S":list2,
+    "E":list3,
+    "I":list4,
+    "R":list5
 }
 
 df=pd.DataFrame.from_dict(df)
 df = df.set_index('Time')
 df.to_csv("SEIR_results.csv")
+
+df2=pd.DataFrame.from_dict(df2)
+df2 = df2.set_index("Time")
+df2.to_csv("SEIR_results2.csv")
 
 f=open('outputt.txt','w')
 for element in list1:

@@ -19,9 +19,10 @@ N=1000 # velikost mreže
 k=5 # povprečno povezanost
 p=0.1 # verjetnost za dajnosezno povezavi v SW mrezi
 seed=100
-G=nx.watts_strogatz_graph(N,k,p)'''
+G=nx.watts_strogatz_graph(N,k,p)
+tip='SW'''
 
-def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N):
+def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip):
     G=G
     '''tmaxit=200
     beta=0.45
@@ -41,7 +42,7 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N):
         nodeindex=np.arange(0,N,1)
         #print(X)
         try:
-            potf="SEIR_results\\beta=_%.2f,sigma=_%.2f,gamma=_%.2f,InitE=_%.2f\\"%(beta,sigma,gamma,initE)
+            potf="SEIR_results\\Tip=%s,beta=%.2f,sigma=%.2f,gamma=%.2f,InitE=%.2f\\"%(tip,beta,sigma,gamma,initE)
             os.mkdir(potf)
             
         except:
@@ -62,7 +63,7 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N):
             rr=random.random()
             if(rr<0.01):
                 rrnode=random.randint(0,N)
-                print(rrnode)
+                #print(rrnode)
                 if(model.X[rrnode]==1):
                     model.X[rrnode]=5
         pass
@@ -105,8 +106,8 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N):
         plt.plot(list8)
         plt.show()'''
         #print(len(list0),len(list2))
-        print(listnode)
-        print(listnodeafter)
+        #print(listnode)
+        #print(listnodeafter)
         
         df={
             "Iter":list00,
@@ -133,4 +134,4 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N):
         print(pon)
 
 
-#SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N)
+#SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip)

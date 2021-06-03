@@ -43,18 +43,19 @@ def opinion(G,za,nevem,proti,rep,flesibilnost, N):
         else:
             G.nodes[i]['atribut']=9
           
-    Eold=E(G)
-    print(Eold)
+    Eold=E(G,op,N)
+    #print(Eold)
     for t in range(N*rep):
         iz=random.randint(0,len(G)-1)
         temp=G.nodes[iz]['atribut']
         G.nodes[iz]['atribut']=random.choice([5,8,9])
-        Enew=E(G)
-        if(Enew > Eold):
-            G.nodes[iz]['atribut']=temp
+        Enew=E(G,op,N)
+        
+        if(Enew < Eold):
+            Eold=Enew
         else:
             if(Metropolis(Enew, Eold, flesibilnost)):
-                pass
+                Eold=Enew
             else:
                 G.nodes[iz]['atribut'] = temp
     return G

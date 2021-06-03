@@ -27,7 +27,7 @@ def Infected(location):
         end_day=df["Time"][end_time]
         max_list.append([max_value,max_day,end_day])
     
-    #speed of infection
+        #speed of infection
     return np.array(max_list)
 
 
@@ -54,6 +54,8 @@ def average_SEIR(location):
     data_matrix_I=np.zeros((NumberOfFiles,data_length),float)
     data_matrix_R=np.zeros((NumberOfFiles,data_length),float)
     
+    data_matrix_I_cum=np.zeros((NumberOfFiles,data_length-1),float)
+    
     #fill matrix
     for i in range(NumberOfFiles):
         df=pd.read_csv(location+"//"+SEIR_files[i])
@@ -70,62 +72,91 @@ def average_SEIR(location):
         data_R=df["R"]
         data_matrix_R[i,:]=data_R
         
+        temp=np.diff(data_I)
+        temp[temp<0] = 0
+        temp=np.cumsum(temp)
+        data_matrix_I_cum[i,:]=temp
+        
     #calculate mean and std. deviation
     ret_list_S=[]
     ret_list_E=[]
     ret_list_I=[]
     ret_list_R=[]
+    
+    ret_list_I_cum=[]
     for i in range(data_length):
         ret_list_S.append([np.mean(data_matrix_S[:,i]),np.std(data_matrix_S[:,i])])
         ret_list_E.append([np.mean(data_matrix_E[:,i]),np.std(data_matrix_E[:,i])])
         ret_list_I.append([np.mean(data_matrix_I[:,i]),np.std(data_matrix_I[:,i])])
         ret_list_R.append([np.mean(data_matrix_R[:,i]),np.std(data_matrix_R[:,i])])
         
-    return [np.array(ret_list_S),np.array(ret_list_E),np.array(ret_list_I),np.array(ret_list_R)]
+    for i in range(data_length-1):
+        ret_list_I_cum.append([np.mean(data_matrix_I_cum[:,i]),np.std(data_matrix_I_cum[:,i])])
+        
+    return [np.array(ret_list_S),np.array(ret_list_E),np.array(ret_list_I),np.array(ret_list_R),np.array(ret_list_I_cum)]
     
     
-def network_parameters(path):
-    graph=nx.read_gexf(path)
+def network_parameters(location):
     
+    graph_file = [f for f in os.listdir(location) if f.endswith('.gexf')]
+    graph=nx.read_gexf(location+"//"+graph_file[0])
+    tip=graph_file[0].split("_")[0]
+    N=graph.number_of_nodes()
     #modularity
     part = community.best_partition(graph)
     mod = community.modularity(part,graph)
     
     #clustering
-    c=nx.average_clustering(graph,weight='weight')
+    c=nx.average_clustering(graph)#,weight='weight')
     
     #distribution
     node_degree=[val for (node, val) in graph.degree()]
     freq = itemfreq(node_degree)
-    a = freq[:,0]
-    b = freq[:,1]
+    a_ = freq[:,0]
+    b_ = freq[:,1]
     
     #shortest path
-    for (u,v,d) in graph.edges(data=True):
-        d['weight']=1/d['weight']
-    l=nx.average_shortest_path_length(graph, weight="weight")
+    #for (u,v,d) in graph.edges(data=True):
+        #d['weight']=1/d['weight']
+    l=nx.average_shortest_path_length(graph)#, weight="weight")
     
+    #opinion
+    f,a,u=0,0,0
+    for node in graph:
+        if(graph.nodes[node]['atribut']==5):
+            f+=1
+        if(graph.nodes[node]['atribut']==8):
+            u+=1
+        if(graph.nodes[node]['atribut']==9):
+            a+=1
     
-    return [c, l, mod, a, b]
+    return [tip,c, l, mod, a_, b_, f/N, a/N, u/N]
 
 def full_analysis():
     rootdir = 'SEIR_results'
     folders=[x[1] for x in os.walk(rootdir)][0]
     
     d={}
+    
+    df_par=[]
+    
     i=0
     for folder in folders:
         key="%d"%(i)
         d[key]={}
         location=rootdir+"//"+folder
         
+        #AVG SEIR------------------------------------------------------
         d[key]["avg_SEIR"]={}
-        S,E,I,R=average_SEIR(location)
+        S,E,I,R,I_cum=average_SEIR(location)
         d[key]["avg_SEIR"]["S"]=S[:,0],S[:,1]
         d[key]["avg_SEIR"]["E"]=E[:,0],E[:,1]
         d[key]["avg_SEIR"]["I"]=I[:,0],I[:,1]
         d[key]["avg_SEIR"]["R"]=R[:,0],R[:,1]
         
+        d[key]["avg_SEIR"]["I_cum"]=I_cum[:,0],I_cum[:,1]
+        
+        #INFECTED------------------------------------------------------
         d[key]["Infected"]={}
         I_array=Infected(location)
         
@@ -147,11 +178,45 @@ def full_analysis():
         d[key]["Infected"]["ep_length"]["std"]=np.std(I_array[:,2])
         d[key]["Infected"]["ep_length"]["freq"]=frequency_count(I_array[:,2])[:,0],frequency_count(I_array[:,2])[:,1]
         
+        #NETWORK PARAMETERS
+        d[key]["Network"]={}
+        tip,c,l,mod,a_,b_,f,a,u=network_parameters(location)
+        d[key]["Network"]["type"]=tip
+        d[key]["Network"]["clustering"]=c
+        d[key]["Network"]["path"]=l
+        d[key]["Network"]["modularity"]=mod
+        d[key]["Network"]["degree_dist"]=a_,b_
+        d[key]["Network"]["opinions"]=f,a,u
+        
+        #PARAMETERS
+        d[key]["Parameters"]={}
+        par=np.loadtxt(location+"//"+"parameters.dat")
+        d[key]["Parameters"]["beta"]=par[0]
+        d[key]["Parameters"]["sigma"]=par[1]
+        d[key]["Parameters"]["gamma"]=par[2]
+        d[key]["Parameters"]["initE"]=par[3]
+        d[key]["Parameters"]["N"]=par[4]
+        
+        #DF PARAMETERS
+        df_par.append([i,tip,par[0],par[1],par[2],par[3],par[4],f,a,u])
+        
         i+=1
     
-    return d
+    
+    df=pd.DataFrame({"Folder":[x[0] for x in df_par],
+                     "Type":[x[1] for x in df_par],
+                     "Beta":[x[2] for x in df_par],
+                     "Sigma":[x[3] for x in df_par],
+                     "Gamma":[x[4] for x in df_par],
+                     "InitE":[x[5] for x in df_par],
+                     "N":[x[6] for x in df_par],
+                     "For":[x[7] for x in df_par],
+                     "Against":[x[8] for x in df_par],
+                     "Undecided":[x[9] for x in df_par],})
+    
+    return [d,df]
         
-        
+"""      
 df=pd.read_csv("SEIR_results//test//pon=_9.csv")
 print(len(df))
 print(df["Time"][1])
@@ -180,3 +245,4 @@ print(d["1"]["Infected"]["max_I"]["freq"][0])
 #plt.plot(d["1"]["avg_SEIR"]["E"][0])
 plt.errorbar(df["Iter"],d["1"]["avg_SEIR"]["I"][0],d["1"]["avg_SEIR"]["I"][1])
 plt.show()
+"""

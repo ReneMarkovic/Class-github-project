@@ -35,7 +35,10 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip):
     sigma=sigma
     gamma=gamma
     initE=initE
+    potf="SEIR_results\\Tip=%s,beta=%.2f,sigma=%.2f,gamma=%.2f,InitE=%.2f\\"%(tip,beta,sigma,gamma,initE)
+    
     for pon in range(ponovitev):
+        
         nodeindex=np.arange(0,N,1)
         
         model = SEIRSNetworkModel(G, beta=beta, sigma=sigma, gamma=gamma, initE=initE,store_Xseries = True)   
@@ -48,11 +51,16 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip):
                     model.X[node]=1
         
         try:
-            potf="SEIR_results\\Tip=%s,beta=%.2f,sigma=%.2f,gamma=%.2f,InitE=%.2f\\"%(tip,beta,sigma,gamma,initE)
             os.mkdir(potf)
             
         except:
             pass
+        
+        if pon==1:
+            f=open(potf+'parameters.dat', 'w')
+            f.write("%f %f %f %d %d\n"%(beta,sigma,gamma,initE,N))
+            f.close()
+            nx.write_gexf(G,potf+tip+"_network.gexf")
         
         listnode=X.tolist()
         dfnode={
@@ -61,7 +69,7 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip):
         }
         dfnode=pd.DataFrame.from_dict(dfnode)
         dfnode = dfnode.set_index('index')
-        dfnode.to_csv(potf+"pon=_%d_Nodes.csv"%(pon))
+        dfnode.to_csv(potf+"pon=_%d_Nodes.txt"%(pon))
         
         
         
@@ -70,7 +78,7 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip):
             model.run_iteration()
             rr=random.random()
             if(rr<0.01):
-                rrnode=random.randint(0,N)
+                rrnode=random.randint(0,N-1)
                 #print(rrnode)
                 if(model.X[rrnode]==1):
                     model.X[rrnode]=5
@@ -138,7 +146,7 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip):
         }
         dfnode2=pd.DataFrame.from_dict(dfnode2)
         dfnode2 = dfnode2.set_index('index')
-        dfnode2.to_csv(potf+"pon=_%d_NodesAfter.csv"%(pon))
+        dfnode2.to_csv(potf+"pon=_%d_NodesAfter.txt"%(pon))
         print(pon)
 
 

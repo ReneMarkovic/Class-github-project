@@ -57,6 +57,12 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip):
         dfnode = dfnode.set_index('index')
         dfnode.to_csv(potf+"pon=_%d_Nodes.csv"%(pon))
         
+        for node in range(0,N,1):
+            if(model.X[rrnode]==8):
+                    model.X[rrnode]=1
+            if(model.X[rrnode]==9):
+                    model.X[rrnode]=1
+        
         list0=np.arange(0,tmaxit+1,1)
         for t in range (tmaxit):    
             model.run_iteration()

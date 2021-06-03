@@ -37,15 +37,15 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip):
     initE=initE
     for pon in range(ponovitev):
         nodeindex=np.arange(0,N,1)
+        
+        model = SEIRSNetworkModel(G, beta=beta, sigma=sigma, gamma=gamma, initE=initE,store_Xseries = True)   
+        X=model.X
+        #model.X[0]=5
         for node in range(0,N,1):
             if(model.X[rrnode]==8):
                     model.X[rrnode]=1
             if(model.X[rrnode]==9):
                     model.X[rrnode]=1
-        model = SEIRSNetworkModel(G, beta=beta, sigma=sigma, gamma=gamma, initE=initE,store_Xseries = True)   
-        X=model.X
-        #model.X[0]=5
-        
         #print(X)
         try:
             potf="SEIR_results\\Tip=%s,beta=%.2f,sigma=%.2f,gamma=%.2f,InitE=%.2f\\"%(tip,beta,sigma,gamma,initE)

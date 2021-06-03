@@ -37,18 +37,18 @@ def opinion(G,za,nevem,proti,rep,flesibilnost, N):
     #Ali se vozlišča želijo cepit, se ne želijo cepit oz. so neopredeljena na začetku simulacije
     for i in G:
         if random.random()<za:
-            G.nodes[i]['atribut']=1
+            G.nodes[i]['atribut']=5
         elif random.random()<za+proti:
-            G.nodes[i]['atribut']=-1
+            G.nodes[i]['atribut']=8
         else:
-            G.nodes[i]['atribut']=0
+            G.nodes[i]['atribut']=9
           
     Eold=E(G)
     print(Eold)
     for t in range(N*rep):
         iz=random.randint(0,len(G)-1)
         temp=G.nodes[iz]['atribut']
-        G.nodes[iz]['atribut']=random.choice([-1,0,1])
+        G.nodes[iz]['atribut']=random.choice([5,8,9])
         Enew=E(G)
         if(Enew > Eold):
             G.nodes[iz]['atribut']=temp
@@ -58,3 +58,4 @@ def opinion(G,za,nevem,proti,rep,flesibilnost, N):
             else:
                 G.nodes[iz]['atribut'] = temp
     return G
+opinion()

@@ -20,7 +20,9 @@ G, pos=network.network(tip,oblika, N)
 za=0.1
 proti=0.1
 nevem=1-za-proti
-G=po.opinion(G,za,nevem,proti)
+fleksibilnost=1
+rep=10
+G=po.opinion(G,za,nevem,proti,rep,fleksibilnost,N)
 #Rezultat je mreza, kjer so menja vozlišč določena po principu minimalne energije
 
 #----------3 DEL---------------#
@@ -30,7 +32,12 @@ beta=0.45
 sigma=1/5.1
 gamma=1/7
 initE=100
+<<<<<<< Updated upstream
 ponovitev=10
 seir.SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip)
+=======
+ponovitev=100
+seir.SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE)
+>>>>>>> Stashed changes
 
 #----------3 DEL---------------#

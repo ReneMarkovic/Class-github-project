@@ -58,4 +58,3 @@ def opinion(G,za,nevem,proti,rep,flesibilnost, N):
             else:
                 G.nodes[iz]['atribut'] = temp
     return G
-opinion()

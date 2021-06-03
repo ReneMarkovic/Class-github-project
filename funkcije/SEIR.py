@@ -42,11 +42,11 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip):
         X=model.X
         #model.X[0]=5
         for node in range(0,N,1):
-            if(model.X[rrnode]==8):
-                    model.X[rrnode]=1
-            if(model.X[rrnode]==9):
-                    model.X[rrnode]=1
-        #print(X)
+            if(model.X[node]==8):
+                    model.X[node]=1
+            if(model.X[node]==9):
+                    model.X[node]=1
+        
         try:
             potf="SEIR_results\\Tip=%s,beta=%.2f,sigma=%.2f,gamma=%.2f,InitE=%.2f\\"%(tip,beta,sigma,gamma,initE)
             os.mkdir(potf)

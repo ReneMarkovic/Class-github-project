@@ -20,7 +20,7 @@ G, pos=network.network(tip,oblika, N)
 za=0.1
 proti=0.1
 nevem=1-za-proti
-G=po.opinion(G,za,nevem,proti,N)
+G=po.opinion(G,za,nevem,proti)
 #Rezultat je mreza, kjer so menja vozlišč določena po principu minimalne energije
 
 #----------3 DEL---------------#

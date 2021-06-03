@@ -2,15 +2,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
 import random
+import math
 
 #Metropolis algoritem
-
+def Metropolis(Enew, Eold, flesibilnost):
+    randomNumber = random.uniform(0, 1)
+    if (randomNumber < math.exp((Enew - Eold) / flesibilnost)):
+        return True
+    else:
+        return False
 '''n = 100
 m = 3
 
 G = nx.barabasi_albert_graph(n, m, seed = None)'''
 
-def E(G,op):
+def E(G,op, N):
     E=np.zeros(N,float)
     Eavg=0.0
     for i in G:
@@ -24,8 +30,8 @@ def E(G,op):
             Eavg+=E[i]
     return Eavg
 
-def opinion(G,za,nevem,proti,rep,flesibilnost):
-    N=len(G)
+def opinion(G,za,nevem,proti,rep,flesibilnost, N):
+    N = len(G)
     op=np.zeros(N,float)
     
     #Ali se vozlišča želijo cepit, se ne želijo cepit oz. so neopredeljena na začetku simulacije
@@ -44,11 +50,11 @@ def opinion(G,za,nevem,proti,rep,flesibilnost):
         temp=G.nodes[iz]['atribut']
         G.nodes[iz]['atribut']=random.choice([-1,0,1])
         Enew=E(G)
-        if(Enew>Eold):
+        if(Enew > Eold):
             G.nodes[iz]['atribut']=temp
         else:
-            if (Metropolis,flesibilnost)
-            
+            if(Metropolis(Enew, Eold, flesibilnost)):
+                pass
             else:
-                G.nodes[iz]['atribut']=temp
-   return G
+                G.nodes[iz]['atribut'] = temp
+    return G

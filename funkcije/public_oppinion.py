@@ -5,9 +5,9 @@ import random
 import math
 
 #Metropolis algoritem
-def Metropolis(Enew, Eold, flesibilnost):
+def Metropolis(Enew, Eold, fleksibilnost):
     randomNumber = random.uniform(0, 1)
-    if (randomNumber < math.exp((Enew - Eold) / flesibilnost)):
+    if (randomNumber < math.exp((Enew - Eold) / fleksibilnost)):
         return True
     else:
         return False
@@ -30,7 +30,7 @@ def E(G,op, N):
             Eavg+=E[i]
     return Eavg
 
-def opinion(G,za,nevem,proti,rep,flesibilnost, N):
+def opinion(G,za,nevem,proti,rep,fleksibilnost, N):
     N = len(G)
     op=np.zeros(N,float)
     
@@ -54,7 +54,7 @@ def opinion(G,za,nevem,proti,rep,flesibilnost, N):
         if(Enew < Eold):
             Eold=Enew
         else:
-            if(Metropolis(Enew, Eold, flesibilnost)):
+            if(Metropolis(Enew, Eold, fleksibilnost)):
                 Eold=Enew
             else:
                 G.nodes[iz]['atribut'] = temp

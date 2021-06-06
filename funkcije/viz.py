@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import pandas as pd
 from matplotlib.animation import FuncAnimation,PillowWriter
-import community
+#import community
 import analysis
 
 #Izris mreže

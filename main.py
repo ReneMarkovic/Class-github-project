@@ -3,9 +3,10 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from funkcije import network
 from funkcije import public_oppinion as po
-from funkcije import SEIR as seir
+#from funkcije import SEIR as seir
 from funkcije import analysis as analysis
 
+"""
 #----------1 DEL---------------#
 tip='SW'
 oblika='circle'
@@ -36,6 +37,8 @@ initE=100
 
 ponovitev=10
 seir.SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip)
+"""
 
 #----------3 DEL---------------#
-results,df=analysis.full_analysis()
+d,df=analysis.full_analysis()
+print(d,df)

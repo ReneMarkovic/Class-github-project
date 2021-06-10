@@ -26,7 +26,7 @@ Nlist=[N for i in range(tmaxit+1)]
 #print(Nlist)
 
 class SEIRSNetworkModel2(SEIRSNetworkModel):
-    def run_iteration(self,tau):
+    def run_iteration(self,dt):
         if(self.tidx >= len(self.tseries)-1):
             # Room has run out in the timeseries storage arrays; double the size of these arrays:
             self.increase_data_series_length()
@@ -54,7 +54,7 @@ class SEIRSNetworkModel2(SEIRSNetworkModel):
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             # Compute the time until the next event takes place
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            tau = tau
+            tau = dt
             self.t += tau
             self.timer_state += tau
     
@@ -98,7 +98,7 @@ class SEIRSNetworkModel2(SEIRSNetworkModel):
             #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         else:
-            tau=tau
+            tau=dt
             self.t += tau
             self.timer_state += tau
 
@@ -163,7 +163,7 @@ class SEIRSNetworkModel2(SEIRSNetworkModel):
 
 
 
-def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip,tau):
+def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip,dt):
     G=G
     '''tmaxit=200
     beta=0.45
@@ -248,17 +248,17 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip,tau):
         list7 =Q_E.tolist()
         list8 =Q_I.tolist()
         Rlist=[]
-        print(len(Nlist),len(list0),len(list1),len(list2),len(list3),len(list4),len(list5))
+        #print(len(Nlist),len(list0),len(list1),len(list2),len(list3),len(list4),len(list5))
         for i in range(tmaxit+1):
             difference = Nlist[i]-list2[i]-list3[i]-list4[i]-list6[i]
             Rlist.append(difference)
-        print(list1)
+        #print(list1)
         listnodeafter=X2.tolist()
 
         #print(list0,list1)
         
         #plt.plot(list1)
-        plt.plot(list2)
+        '''plt.plot(list2)
         plt.show()
         plt.plot(list3)
         plt.show()
@@ -269,7 +269,7 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip,tau):
         plt.plot(Rlist)
         plt.show()
         plt.plot(list0,list1)
-        plt.show()
+        plt.show()'''
         #print(len(list0),len(list2))
         #print(listnode)
         #print(listnodeafter)

@@ -9,7 +9,7 @@ from seirsplus.utilities import *
 import pandas as pd
 import os
 
-tmaxit=1000'''
+'''tmaxit=1000
 beta=0.45
 sigma=1/5.1
 gamma=1/7

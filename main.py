@@ -29,7 +29,7 @@ G=po.opinion(G,za,nevem,proti,rep,fleksibilnost,N)
 
 #----------3 DEL---------------#
 
-tmaxit=200
+tmaxit=2000
 beta=0.45
 sigma=1/5.1
 gamma=1/7

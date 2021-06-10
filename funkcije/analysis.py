@@ -35,7 +35,7 @@ def frequency_count(data):
     freq_list=[]
     min_value=min(data)
     max_value=max(data)
-    bin_width=(max_value-min_value)/50
+    bin_width=(max_value-min_value)/20
     data=np.array(data)
     val=min_value
     while(val<=max_value+bin_width):
@@ -53,11 +53,12 @@ def average_SEIR(location):
     data_matrix_E=np.zeros((NumberOfFiles,data_length),float)
     data_matrix_I=np.zeros((NumberOfFiles,data_length),float)
     data_matrix_R=np.zeros((NumberOfFiles,data_length),float)
-    
+
     data_matrix_I_cum=np.zeros((NumberOfFiles,data_length-1),float)
     
     #fill matrix
     for i in range(NumberOfFiles):
+
         df=pd.read_csv(location+"//"+SEIR_files[i])
         
         data_S=df["S"]
@@ -77,6 +78,9 @@ def average_SEIR(location):
         temp=np.cumsum(temp)
         data_matrix_I_cum[i,:]=temp
         
+        if(i==0):
+            data_time=np.array(df["Time"])
+        
     #calculate mean and std. deviation
     ret_list_S=[]
     ret_list_E=[]
@@ -93,15 +97,15 @@ def average_SEIR(location):
     for i in range(data_length-1):
         ret_list_I_cum.append([np.mean(data_matrix_I_cum[:,i]),np.std(data_matrix_I_cum[:,i])])
         
-    return [np.array(ret_list_S),np.array(ret_list_E),np.array(ret_list_I),np.array(ret_list_R),np.array(ret_list_I_cum)]
+    return [np.array(ret_list_S),np.array(ret_list_E),np.array(ret_list_I),np.array(ret_list_R),np.array(ret_list_I_cum),data_time]
     
     
 def network_parameters(location):
-    
     graph_file = [f for f in os.listdir(location) if f.endswith('.gexf')]
     graph=nx.read_gexf(location+"//"+graph_file[0])
     tip=graph_file[0].split("_")[0]
     N=graph.number_of_nodes()
+    
     #modularity
     part = community.best_partition(graph)
     mod = community.modularity(part,graph)
@@ -122,15 +126,19 @@ def network_parameters(location):
     
     #opinion
     f,a,u=0,0,0
+    opinion=[]
     for node in graph:
         if(graph.nodes[node]['atribut']==5):
             f+=1
+            opinion.append(0)
         if(graph.nodes[node]['atribut']==8):
             u+=1
+            opinion.append(1)
         if(graph.nodes[node]['atribut']==9):
             a+=1
+            opinion.append(2)
     
-    return [tip,c, l, mod, a_, b_, f/N, a/N, u/N]
+    return [tip,c, l, mod, a_, b_, f/N, a/N, u/N, opinion]
 
 def full_analysis():
     rootdir = 'SEIR_results'
@@ -148,7 +156,8 @@ def full_analysis():
         
         #AVG SEIR------------------------------------------------------
         d[key]["avg_SEIR"]={}
-        S,E,I,R,I_cum=average_SEIR(location)
+        S,E,I,R,I_cum,T=average_SEIR(location)
+        
         d[key]["avg_SEIR"]["S"]=S[:,0],S[:,1]
         d[key]["avg_SEIR"]["E"]=E[:,0],E[:,1]
         d[key]["avg_SEIR"]["I"]=I[:,0],I[:,1]
@@ -156,9 +165,12 @@ def full_analysis():
         
         d[key]["avg_SEIR"]["I_cum"]=I_cum[:,0],I_cum[:,1]
         
+        d[key]["avg_SEIR"]["Time"]=T
+        
         #INFECTED------------------------------------------------------
         d[key]["Infected"]={}
         I_array=Infected(location)
+        
         
         d[key]["Infected"]["max_I"]={}
         d[key]["Infected"]["max_I"]["values"]=I_array[:,0]
@@ -180,13 +192,14 @@ def full_analysis():
         
         #NETWORK PARAMETERS
         d[key]["Network"]={}
-        tip,c,l,mod,a_,b_,f,a,u=network_parameters(location)
+        tip,c,l,mod,a_,b_,f,a,u,opinion=network_parameters(location)
+        
         d[key]["Network"]["type"]=tip
         d[key]["Network"]["clustering"]=c
         d[key]["Network"]["path"]=l
         d[key]["Network"]["modularity"]=mod
         d[key]["Network"]["degree_dist"]=a_,b_
-        d[key]["Network"]["opinions"]=f,a,u
+        d[key]["Network"]["opinions"]=f,a,u,opinion
         
         #PARAMETERS
         d[key]["Parameters"]={}
@@ -215,6 +228,15 @@ def full_analysis():
                      "Undecided":[x[9] for x in df_par],})
     
     return [d,df]
+
+def save_network(G,tip,beta,sigma,gamma,initE):
+    potf="SEIR_results\\Tip=%s,beta=%.2f,sigma=%.2f,gamma=%.2f,InitE=%.2f\\"%(tip,beta,sigma,gamma,initE)
+    try:
+        os.mkdir(potf)
+    except:
+        pass
+    nx.write_gexf(G,potf+tip+"_network.gexf")
+    
         
 """      
 df=pd.read_csv("SEIR_results//test//pon=_9.csv")

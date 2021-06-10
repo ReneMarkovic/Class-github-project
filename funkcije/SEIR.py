@@ -177,6 +177,7 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip,dt):
     initE=initE
     potf="SEIR_results\\Tip=%s,beta=%.2f,sigma=%.2f,gamma=%.2f,InitE=%.2f\\"%(tip,beta,sigma,gamma,initE)
     
+
     for pon in range(ponovitev):
         
         nodeindex=np.arange(0,N,1)
@@ -190,17 +191,12 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip,dt):
             if(model.X[node]==9):
                     model.X[node]=1
         
-        try:
-            os.mkdir(potf)
-            
-        except:
-            pass
         
-        if pon==1:
+        if pon==0:
             f=open(potf+'parameters.dat', 'w')
             f.write("%f %f %f %d %d\n"%(beta,sigma,gamma,initE,N))
             f.close()
-            nx.write_gexf(G,potf+tip+"_network.gexf")
+            
         
         listnode=X.tolist()
         dfnode={
@@ -296,6 +292,5 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip,dt):
         dfnode2 = dfnode2.set_index('index')
         dfnode2.to_csv(potf+"pon=_%d_NodesAfter.txt"%(pon))
         print(pon)
-
 
 #SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip)

@@ -8,7 +8,7 @@ from funkcije import analysis as analysis
 
 
 #----------1 DEL---------------#
-tip='SW'
+tip='SF'
 oblika='circle'
 N=100
 
@@ -29,15 +29,17 @@ G=po.opinion(G,za,nevem,proti,rep,fleksibilnost,N)
 
 #----------3 DEL---------------#
 
-tmaxit=2000
+tmaxit=500
 beta=0.45
 sigma=1/5.1
 gamma=1/7
-initE=100
+initE=15
 dt=1
 ponovitev=10
+analysis.save_network(G,tip,beta,sigma,gamma,initE)
 seir.SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip,dt)
+print("end")
 
 #----------3 DEL---------------#
-'''d,df=analysis.full_analysis()
-print(d,df)'''
+d,df=analysis.full_analysis()
+print(d,df)

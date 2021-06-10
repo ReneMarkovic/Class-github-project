@@ -10,7 +10,7 @@ import pandas as pd
 import os
 
 
-tmaxit=3000
+'''tmaxit=3000
 beta=0.45
 sigma=1/5.1
 gamma=1/7
@@ -21,7 +21,7 @@ k=5 # povprečno povezanost
 p=0.1 # verjetnost za dajnosezno povezavi v SW mrezi
 seed=100
 G=nx.watts_strogatz_graph(N,k,p)
-tip='SW'
+tip='SW'''
 Nlist=[N for i in range(tmaxit+1)]
 #print(Nlist)
 
@@ -163,7 +163,7 @@ class SEIRSNetworkModel2(SEIRSNetworkModel):
 
 
 
-def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip):
+def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip,tau):
     G=G
     '''tmaxit=200
     beta=0.45
@@ -215,7 +215,7 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip):
         
         list0=np.arange(0,tmaxit+1,1)
         for t in range (tmaxit):
-            model.run_iteration(1)
+            model.run_iteration(tau)
             rr=random.random()
             if(rr<0.01):
                 rrnode=random.randint(0,N-1)
@@ -299,4 +299,4 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip):
         print(pon)
 
 
-SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip)
+#SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip)

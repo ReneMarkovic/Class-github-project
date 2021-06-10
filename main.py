@@ -34,9 +34,9 @@ beta=0.45
 sigma=1/5.1
 gamma=1/7
 initE=100
-
+tau=1
 ponovitev=10
-seir.SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip)
+seir.SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip.tau)
 """
 
 #----------3 DEL---------------#

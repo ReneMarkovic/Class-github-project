@@ -22,7 +22,7 @@ seed=100
 G=nx.watts_strogatz_graph(N,k,p)
 tip='SW'''
 Nlist=[N for i in range(tmaxit+1)]
-print(Nlist)
+#print(Nlist)
 def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip):
     G=G
     '''tmaxit=200

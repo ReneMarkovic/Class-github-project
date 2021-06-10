@@ -22,8 +22,6 @@ p=0.1 # verjetnost za dajnosezno povezavi v SW mrezi
 seed=100
 G=nx.watts_strogatz_graph(N,k,p)
 tip='SW'''
-Nlist=[N for i in range(tmaxit+1)]
-#print(Nlist)
 
 class SEIRSNetworkModel2(SEIRSNetworkModel):
     def run_iteration(self,dt):
@@ -164,6 +162,7 @@ class SEIRSNetworkModel2(SEIRSNetworkModel):
 
 
 def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip,dt):
+    Nlist=[N for i in range(tmaxit+1)]
     G=G
     '''tmaxit=200
     beta=0.45
@@ -215,7 +214,7 @@ def SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip,dt):
         
         list0=np.arange(0,tmaxit+1,1)
         for t in range (tmaxit):
-            model.run_iteration(tau)
+            model.run_iteration(dt)
             rr=random.random()
             if(rr<0.01):
                 rrnode=random.randint(0,N-1)

@@ -5,9 +5,11 @@ from funkcije import network
 from funkcije import public_oppinion as po
 from funkcije import SEIR as seir
 from funkcije import analysis as analysis
+from funkcije import viz
+
 
 #----------1 DEL---------------#
-tip='SW'
+tip='SF'
 oblika='circle'
 N=100
 
@@ -28,14 +30,29 @@ G=po.opinion(G,za,nevem,proti,rep,fleksibilnost,N)
 
 #----------3 DEL---------------#
 
-tmaxit=200
+tmaxit=500
 beta=0.45
 sigma=1/5.1
 gamma=1/7
-initE=100
-
+initE=15
+dt=1
 ponovitev=10
-seir.SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip)
+analysis.save_network(G,tip,beta,sigma,gamma,initE)
+seir.SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip,dt)
+print("end")
 
-#----------3 DEL---------------#
-results,df=analysis.full_analysis()
+#----------4 DEL---------------#
+d,df=analysis.full_analysis()
+print(d,df)
+
+
+#----------5 DEL---------------#
+datoteka='SEIR_results/Tip=SF,beta=0.45,sigma=0.20,gamma=0.14,InitE=15.00/pon=_0.csv' #primer datoteke, poljubno
+x="1"   #posamezna simulacija
+
+viz.mreža(G,pos,x)
+viz.delež(x)
+viz.časovni_potek(datoteka)
+viz.animacija(datoteka)
+viz.porazdelitev(x)
+viz.agregacija(x)

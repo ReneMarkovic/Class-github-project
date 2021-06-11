@@ -3,44 +3,62 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import pandas as pd
 from matplotlib.animation import FuncAnimation,PillowWriter
-import network
-import analysis
+from funkcije import analysis
 
 d,df=analysis.full_analysis()
 
-'''#Izris mreže
-def mreža(datoteka_index,tip,pos,N):
-    G, pos=network.network(tip,pos,N)
+
+#Izris mreže
+def mreža(G,pos,x):
+    #G, pos=network.network(tip,oblika,N)
     
-    df=pd.read_csv(datoteka_index)
+    data=d[x]["Network"]["opinions"][3]
+    ZA=[i for i, e in enumerate(data) if e == 0]    #za cepljenje
+    PROTI=[i for i, e in enumerate(data) if e == 1] #proti cepljenju
+    NEVEM=[i for i, e in enumerate(data) if e == 2] #neodločeni
     
-    A=df[df["Value"] == "[1]"] #vozli, ki imajo stanje [1]
-    
-    B=df[df["Value"] == "[2]"] #vozli, ki imajo stanje [2]
-    
-    co=["red","blue"]
+    co=["green","red","orange"]
     col=[]
     
     nodesize=[]   #velikost vozlov določimo v skladu s tem koliko povezav imajo
     for i in range(len(pos)):
-        nodesize.append(5*(G.degree(i)+1))
+        nodesize.append(15*(G.degree(i)+1))
         
     for node in G:
-        if node in B['index'].values:
+        if node in ZA:
             col.append(co[0])
-        else:
-            col.append(co[1])    
+            
+        if node in PROTI:
+            col.append(co[1])
+            
+        if node in NEVEM:
+            col.append(co[2])
+           
     
-    MREŽA=nx.draw(G,pos,node_size=nodesize,node_color=col,alpha=0.9,linewidths=0.2,edge_color='black',width=1)
+    nx.draw(G,pos,node_size=nodesize,node_color=col,alpha=0.9,linewidths=0.2,edge_color='black',width=1)
     plt.axis('off') 
-    plt.savefig("MREZA_SW.jpg",dpi=100,bbox_inches='tight')
+    MREŽA=plt.savefig("MREŽA.jpg",dpi=100,bbox_inches='tight')
     plt.show()
     plt.close()
     
     return MREŽA
 
-mreža(r'SEIR_results/Tip=SW,beta=0.45,sigma=0.20,gamma=0.14,InitE=100.00/pon=_0_Nodes.csv','small_world','fruchterman',1000)
-#datoteka_index=SEIR_results/Tip=SW,beta=0.45,sigma=0.20,gamma=0.14,InitE=100.00/pon=_0_Nodes.csv'''
+#mreža('scale_free','circular',100)
+
+
+def delež(x):
+    A=d[x]["Network"]["opinions"]
+    fig = plt.figure()
+    ax = fig.add_axes([0,0,1,1])
+    mnenja = ['ZA', 'PROTI', '???']
+    delež = (A[0],A[1],A[2])
+    ax.bar(mnenja,delež)
+    ax.set_ylabel("delež populacije")
+    populacija=plt.savefig("DELEŽ.jpg",dpi=100,bbox_inches='tight')
+    plt.show()
+    plt.close()
+    
+    return populacija
 
 
 #Časovni potek epidemije
@@ -50,18 +68,18 @@ def časovni_potek(datoteka):
     df.plot(x="Time",y=["S","E","I","R"])
     plt.xlabel("čas")
     plt.ylabel("število")
-    plt.savefig("ČASOVNI_POTEK.jpg",dpi=100,bbox_inches='tight')
+    čas=plt.savefig("ČASOVNI_POTEK.jpg",dpi=100,bbox_inches='tight')
     plt.show()
     plt.close()
     
-    return časovni_potek
-časovni_potek('SEIR_results/Tip=SW,beta=0.45,sigma=0.20,gamma=0.14,InitE=100.00/pon=_0.csv')
+    return čas
+#časovni_potek('SEIR_results/Tip=SF,beta=0.45,sigma=0.20,gamma=0.14,InitE=15.00/pon=_0.csv')
 
 
 #Animacija časovnega poteka
 def animacija(datoteka):
     plt.style.use('seaborn-bright')
-    fig, ax = plt.subplots(figsize=(15,10)) 
+    fig, ax = plt.subplots() 
     
     AAPL_STOCK = pd.read_csv(datoteka)
     
@@ -79,7 +97,7 @@ def animacija(datoteka):
     
     def init():  
         ax.set_xlim(0,AAPL_STOCK.iloc[-1,1])  
-        ax.set_ylim(0,AAPL_STOCK.iloc[0,3])
+        ax.set_ylim(0,AAPL_STOCK.iloc[0,2])
     
     
     def animation(i):
@@ -100,35 +118,34 @@ def animacija(datoteka):
     
     animation = FuncAnimation(fig, func=animation,init_func=init,frames=len(AAPL_STOCK.index))
     writer = PillowWriter(fps=25)  
-    animation.save("ANIMACIJA.gif", writer=writer)
+    ani=animation.save("ANIMACIJA.gif", writer=writer)
     plt.show()
     plt.close()
     
-    return animation
-animacija('SEIR_results/Tip=SW,beta=0.45,sigma=0.20,gamma=0.14,InitE=100.00/pon=_0.csv')
+    return ani
+#animacija('SEIR_results/Tip=SF,beta=0.45,sigma=0.20,gamma=0.14,InitE=15.00/pon=_0.csv')
 
 
 #Porazdelitev števila povezav
-def porazdelitev():
-    a=d["0"]["Network"]["degree_dist"][0]
-    b=d["0"]["Network"]["degree_dist"][1]
+def porazdelitev(x):
+    a=d[x]["Network"]["degree_dist"][0]
+    b=d[x]["Network"]["degree_dist"][1]
     plt.scatter(a,b)
     plt.xlabel("k")
     plt.ylabel("P(k)")
-    plt.savefig("PORAZDELITEV.jpg",dpi=100,bbox_inches='tight')
+    por=plt.savefig("PORAZDELITEV.jpg",dpi=100,bbox_inches='tight')
     plt.show()
     plt.close()
     
-    return porazdelitev
-porazdelitev()
+    return por
 
 
 #Agregacija podatkov
-def agreg():
-    meanS=d["0"]["avg_SEIR"]["S"][0]
-    meanE=d["0"]["avg_SEIR"]["E"][0]
-    meanI=d["0"]["avg_SEIR"]["I"][0]
-    meanR=d["0"]["avg_SEIR"]["R"][0]
+def agregacija(x):
+    meanS=d[x]["avg_SEIR"]["S"][0]
+    meanE=d[x]["avg_SEIR"]["E"][0]
+    meanI=d[x]["avg_SEIR"]["I"][0]
+    meanR=d[x]["avg_SEIR"]["R"][0]
     num_rows = np.shape(meanS)[0]
     plt.figure()
         
@@ -136,10 +153,10 @@ def agreg():
     plt.plot(np.arange(num_rows),meanE,label='E')
     plt.plot(np.arange(num_rows),meanI,label='I')
     plt.plot(np.arange(num_rows),meanR,label='R')
-    stdS=d["0"]["avg_SEIR"]["S"][1]
-    stdE=d["0"]["avg_SEIR"]["E"][1]
-    stdI=d["0"]["avg_SEIR"]["I"][1]
-    stdR=d["0"]["avg_SEIR"]["R"][1]
+    stdS=d[x]["avg_SEIR"]["S"][1]
+    stdE=d[x]["avg_SEIR"]["E"][1]
+    stdI=d[x]["avg_SEIR"]["I"][1]
+    stdR=d[x]["avg_SEIR"]["R"][1]
     y1S=meanS-2*stdS
     y2S=meanS+2*stdS
     y1E=meanE-2*stdE
@@ -153,9 +170,8 @@ def agreg():
     plt.fill_between(np.arange(num_rows),y1I,y2I,alpha=0.2)
     plt.fill_between(np.arange(num_rows),y1R,y2R,alpha=0.2)
     plt.legend()
-    plt.savefig("AGREGACIJA.jpg",dpi=100,bbox_inches='tight')
+    agreg=plt.savefig("AGREGACIJA.jpg",dpi=100,bbox_inches='tight')
     plt.show()
     plt.close()
     
     return agreg
-agreg()

@@ -5,6 +5,7 @@ from funkcije import network
 from funkcije import public_oppinion as po
 from funkcije import SEIR as seir
 from funkcije import analysis as analysis
+from funkcije import viz
 
 
 #----------1 DEL---------------#
@@ -40,6 +41,18 @@ analysis.save_network(G,tip,beta,sigma,gamma,initE)
 seir.SEIR(G,ponovitev,tmaxit,beta,sigma,gamma,initE,N,tip,dt)
 print("end")
 
-#----------3 DEL---------------#
+#----------4 DEL---------------#
 d,df=analysis.full_analysis()
 print(d,df)
+
+
+#----------5 DEL---------------#
+datoteka='SEIR_results/Tip=SF,beta=0.45,sigma=0.20,gamma=0.14,InitE=15.00/pon=_0.csv' #primer datoteke, poljubno
+x="1"   #posamezna simulacija
+
+viz.mreža(G,pos,x)
+viz.delež(x)
+viz.časovni_potek(datoteka)
+viz.animacija(datoteka)
+viz.porazdelitev(x)
+viz.agregacija(x)
